@@ -9,7 +9,7 @@ int main() {
     for (i = 0; i < 256; i++) {
         disk[i] = i;
     }
-
+//
     return (0);
 }
 
