@@ -61,5 +61,6 @@ int main() {
 	printf("Access Time to Memory: %f ns.\n", memAccess);
 	printf("Access Time to Disk: %f ns.\n", diskAccess);
     	return (0);
+//
 }
 
