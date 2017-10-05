@@ -29,65 +29,93 @@ int main() {
         	disk[i] = i;
  	}
 	for(i=0; i < memSize; i++){
-		memory[i] = 0;
+		memory[i] = -1;
 	}
 	for(i=0; i<cacheSize; i++){
-		cache[i] = 0;
+		cache[i] = -1;
 	}
 
 	int value;
-	printf("Enter a integer value in the cache: ");
-	scanf("%d", &value);
-	
-		
-	int cacheIndex = value % cacheSize;
-	int memIndex = value % memSize;
+    int cacheIndex;
+    int memIndex;
+    
+    double missRate = 0;
+    double hitRate = 0;
+    
+    int z = 1;
+    while(z != 0) {
+        printf("Enter a integer value in the cache: ");
+        scanf("%d", &value);
+        
+        if (value > diskSize) {
+            printf("You dun goofed\n");
+            printf("Enter a integer value in the cache: ");
+            scanf("%d", &value);
+        }
+        
+        cacheIndex = value % cacheSize;
+        memIndex = value % memSize;
 
-	
-    //This if statement runs if the cache[cacheIndex] is empty (Compulsory miss)
-	if(cache[cacheIndex] == 0){
-        printf("\nCompulsory​ Miss: NULL");
-        cache[cacheIndex] = disk[value]; //Takes the content of the disk[value] and copies it into cache[cacheIndex]
- 		if(memory[memIndex] != value){ //If the memory[memIndex] is empty OR it contains a value != to the value entered by the user
-			printf("Not in memory\n");
-            memory[memIndex] = disk[value]; //Takes the content of the disk[value] and copies it into memory[memIndex]
-		}
-		else //If the value entered is in memory[memIndex]
-			printf("In memory\n");
+        
+        //This if statement runs if the cache[cacheIndex] is empty (Compulsory miss)
+        if(cache[cacheIndex] == -1){
+            printf("\nCompulsory​ Miss: NULL\n");
+            cache[cacheIndex] = disk[value]; //Takes the content of the disk[value] and copies it into cache[cacheIndex]
+            missRate++;
+            if(memory[memIndex] != value){ //If the memory[memIndex] is empty OR it contains a value != to the value entered by the user
+                printf("Not in memory\n");
+                memory[memIndex] = disk[value]; //Takes the content of the disk[value] and copies it into memory[memIndex]
+            }
+            else //If the value entered is in memory[memIndex]
+                printf("In memory\n");
+        }
+        
+        //This if statement runs if the cache[cacheIndex] is a value that is != to the value entered by the user (Conflict miss)
+        else if ((cache[cacheIndex] != value) && (cache[cacheIndex] != -1)){
+            printf("\nConflict​ Miss: %d\n", cache[cacheIndex]);
+            cache[cacheIndex] = disk[value];
+            missRate++;
+            if(memory[memIndex] != value){
+                printf("Not in memory\n");
+                memory[memIndex] = disk[value];
+            }
+            else
+                printf("In memory\n");
+        }
+        
+        //This if statement runs if the cache[cacheIndex] is equal to the value entered
+        else {
+            printf("Hit: %d\n", cache[cacheIndex]);
+            hitRate++;
+            if(memory[memIndex] != value){
+                printf("Not in memory\n");
+                memory[memIndex] = disk[value];
+            }
+            else
+                printf("In memory\n");
+        }
+
+        printf("Enter 0 to exit: ");
+        scanf("%d", &z);
     }
     
-    //This if statement runs if the cache[cacheIndex] is a value that is != to the value entered by the user (Conflict miss)
-    else if ((cache[cacheIndex] != value) && (cache[cacheIndex] != 0)){
-        printf("\Conflict​ Miss: %d", cache[cacheIndex]);
-        cache[cacheIndex] = disk[value];
-        if(memory[memIndex] != value){
-            printf("Not in memory\n");
-            memory[memIndex] = disk[value];
-        }
-        else
-            printf("In memory\n");
-    }
-    
-    //This if statement runs if the cache[cacheIndex] is equal to the value entered
-    else {
-        printf("Hit: %d", cache[cacheIndex]);
-        if(memory[memIndex] != value){
-            printf("Not in memory\n");
-            memory[memIndex] = disk[value];
-        }
-        else
-            printf("In memory\n");
-    }
-
+    double hitPercent = (hitRate / (hitRate + missRate)) * 100;
+    double missPercent = (missRate / (hitRate + missRate)) * 100;
     
 	double cacheAccess = cacheSize / 4;
 	double memAccess = 100 * (memSize / 16);
 	double diskAccess = 100000 * (diskSize / 256);
+    double avgAccess = (cacheAccess + memAccess + diskAccess) / 3;
 
-	printf("Access Time to Cache: %f ns.\n", cacheAccess);
-	printf("Access Time to Memory: %f ns.\n", memAccess);
-	printf("Access Time to Disk: %f ns.\n", diskAccess);
-    	return (0);
-//
+    printf("Hit Percent: %f%% \n", hitPercent);
+    printf("Miss Percent: %f%% \n", missPercent);
+    
+	//printf("\nAccess Time to Cache: %f ns.\n", cacheAccess);
+	//printf("Access Time to Memory: %f ns.\n", memAccess);
+	//printf("Access Time to Disk: %f ns.\n", diskAccess);
+    printf("Average Access Time: %f%% ns.\n", avgAccess);
+    
+    return (0);
+
 }
 
