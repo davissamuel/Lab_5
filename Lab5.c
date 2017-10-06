@@ -21,6 +21,11 @@ int main() {
 		scanf("%zd", &diskSize);
 	}
 
+	double cacheAccess, memAccess, diskAccess, accTime = 0;
+
+	cacheAccess = cacheSize/4;
+	memAccess = 100 * (memSize / 16);
+	diskAccess = 100000 * (diskSize / 256); 
 
     	int disk[diskSize], memory[memSize], cache[cacheSize];
 
@@ -56,15 +61,18 @@ int main() {
         cacheIndex = value % cacheSize;
         memIndex = value % memSize;
 
-        
+        accTime += cacheAccess;
         //This if statement runs if the cache[cacheIndex] is empty (Compulsory miss)
         if(cache[cacheIndex] == -1){
             printf("\nCompulsory​ Miss: NULL\n");
             cache[cacheIndex] = disk[value]; //Takes the content of the disk[value] and copies it into cache[cacheIndex]
             missRate++;
+		accTime += memAccess;
             if(memory[memIndex] != value){ //If the memory[memIndex] is empty OR it contains a value != to the value entered by the user
                 printf("Not in memory\n");
-                memory[memIndex] = disk[value]; //Takes the content of the disk[value] and copies it into memory[memIndex]
+                memory[memIndex] = disk[value];
+	 //Takes the content of the disk[value] and copies it into memory[memIndex]
+		accTime += diskAccess;
             }
             else //If the value entered is in memory[memIndex]
                 printf("In memory\n");
@@ -94,18 +102,30 @@ int main() {
             else
                 printf("In memory\n");
         }
+	printf("Cache: ");
+	for(i=0; i<cacheSize; i++){
+		if(cache[i] == -1){
+			printf("NULL ");
+		}
+		else
+			printf("%d ", cache[i]);
+	}
 
-        printf("Enter 0 to exit: ");
+	printf("\nMemory: ");
+	for(i = 0; i <memSize; i++){
+		if(memory[i] == -1){
+			printf("NULL ");
+		}
+		else
+			printf("%d " , memory[i]);
+		}
+        printf("\nEnter 0 to exit: ");
         scanf("%d", &z);
     }
     
     double hitPercent = (hitRate / (hitRate + missRate)) * 100;
     double missPercent = (missRate / (hitRate + missRate)) * 100;
     
-	double cacheAccess = cacheSize / 4;
-	double memAccess = 100 * (memSize / 16);
-	double diskAccess = 100000 * (diskSize / 256);
-    double avgAccess = (cacheAccess + memAccess + diskAccess) / 3;
 
     printf("Hit Percent: %f%% \n", hitPercent);
     printf("Miss Percent: %f%% \n", missPercent);
@@ -113,7 +133,7 @@ int main() {
 	//printf("\nAccess Time to Cache: %f ns.\n", cacheAccess);
 	//printf("Access Time to Memory: %f ns.\n", memAccess);
 	//printf("Access Time to Disk: %f ns.\n", diskAccess);
-    printf("Average Access Time: %f%% ns.\n", avgAccess);
+    printf("Total Access Time: %f ns.\n", accTime);
     
     return (0);
 
