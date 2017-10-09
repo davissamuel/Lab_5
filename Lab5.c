@@ -53,7 +53,7 @@ int main() {
         scanf("%d", &value);
         
         if (value > diskSize) {
-            printf("You dun goofed\n");
+            printf("Value must be larger than the disk size: %zd\n", diskSize);
             printf("Enter a integer value in the cache: ");
             scanf("%d", &value);
         }
@@ -64,7 +64,7 @@ int main() {
         accTime += cacheAccess;
         //This if statement runs if the cache[cacheIndex] is empty (Compulsory miss)
         if(cache[cacheIndex] == -1){
-            printf("\nCompulsory​ Miss: NULL\n");
+            printf("\nCompulsory​ Miss\n");
             cache[cacheIndex] = disk[value]; //Takes the content of the disk[value] and copies it into cache[cacheIndex]
             missRate++;
 		accTime += memAccess;
@@ -80,7 +80,7 @@ int main() {
         
         //This if statement runs if the cache[cacheIndex] is a value that is != to the value entered by the user (Conflict miss)
         else if ((cache[cacheIndex] != value) && (cache[cacheIndex] != -1)){
-            printf("\nConflict​ Miss: %d\n", cache[cacheIndex]);
+            printf("\nConflict​ Miss\n");
             cache[cacheIndex] = disk[value];
             missRate++;
             if(memory[memIndex] != value){
@@ -93,16 +93,10 @@ int main() {
         
         //This if statement runs if the cache[cacheIndex] is equal to the value entered
         else {
-            printf("Hit: %d\n", cache[cacheIndex]);
+            printf("Hit\n");
             hitRate++;
-            if(memory[memIndex] != value){
-                printf("Not in memory\n");
-                memory[memIndex] = disk[value];
-            }
-            else
-                printf("In memory\n");
         }
-	printf("Cache: ");
+	printf("\nCache: ");
 	for(i=0; i<cacheSize; i++){
 		if(cache[i] == -1){
 			printf("NULL ");
@@ -119,7 +113,7 @@ int main() {
 		else
 			printf("%d " , memory[i]);
 		}
-        printf("\nEnter 0 to exit: ");
+        printf("\nEnter 1 to continue adding values or 0 to exit: ");
         scanf("%d", &z);
     }
     
@@ -130,9 +124,6 @@ int main() {
     printf("Hit Percent: %f%% \n", hitPercent);
     printf("Miss Percent: %f%% \n", missPercent);
     
-	//printf("\nAccess Time to Cache: %f ns.\n", cacheAccess);
-	//printf("Access Time to Memory: %f ns.\n", memAccess);
-	//printf("Access Time to Disk: %f ns.\n", diskAccess);
     printf("Total Access Time: %f ns.\n", accTime);
     
     return (0);
